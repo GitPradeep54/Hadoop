@@ -1,9 +1,20 @@
+#Aggregate By Key 
+
+#Practice 1
+#Get the count of Pet's in the house 
+#List has two columns ,First one is the Pet category & Second one is age of pets  in house
+
+-------------------------
+| Pet category | Age of Pet  |
+-------------------------
 scala> val data = sc.parallelize(List( ("cat","2"), ("cat", "5"), ("mouse", "4"),("cat", "12"), ("dog", "12"), ("mouse", "2")), 2)
 data: org.apache.spark.rdd.RDD[(String, String)] = ParallelCollectionRDD[4] at parallelize at <console>:28
 
+#Placed in the map <k,v> = <pet category, age of pets>
 scala> val map = data.map(x=>(x._1,x._2.toInt))
 map: org.apache.spark.rdd.RDD[(String, Int)] = MapPartitionsRDD[6] at map at <console>:30
 
+#Counting the Pets available in house 
 scala> val agg= map.aggregateByKey(0)((x,y)=>x+1,(x,y)=>x+y)
 agg: org.apache.spark.rdd.RDD[(String, Int)] = ShuffledRDD[7] at aggregateByKey at <console>:32
 
@@ -20,6 +31,7 @@ scala> agg.collect.foreach(println)
 (cat,3)
 (mouse,2)
 
+#Practice 2
 
 scala> val agg2= map.aggregateByKey(0)((x,y)=>x+y,(x,y)=>x+y)
 agg2: org.apache.spark.rdd.RDD[(String, Int)] = ShuffledRDD[9] at aggregateByKey at <console>:32
@@ -28,6 +40,8 @@ scala> agg2.collect.foreach(println)
 (dog,12)                                                                        
 (cat,19)
 (mouse,6)
+
+#practice 3
 
 scala> val data = sc.parallelize(List( ("cat","2","1"), ("cat","2","5"), ("mouse","1", "4"),("cat","2", "12"), ("dog","3", "12"), ("mouse","1","2")), 2)
 data: org.apache.spark.rdd.RDD[(String, String, String)] = ParallelCollectionRDD[46] at parallelize at <console>:27
