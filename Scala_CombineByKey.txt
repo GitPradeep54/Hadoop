@@ -1,0 +1,27 @@
+#CombineByKey
+scala> orders.take(5).foreach(println)
+1,2013-07-25 00:00:00.0,11599,CLOSED
+2,2013-07-25 00:00:00.0,256,PENDING_PAYMENT
+3,2013-07-25 00:00:00.0,12111,COMPLETE
+4,2013-07-25 00:00:00.0,8827,CLOSED
+5,2013-07-25 00:00:00.0,11318,COMPLETE
+
+scala> val orderMap = orders.map(x => (x.split(",")(3),1))
+orderMap: org.apache.spark.rdd.RDD[(String, Int)] = MapPartitionsRDD[55] at map at <console>:29
+
+scala> orderMap.take(5).foreach(println)
+(CLOSED,1)
+(PENDING_PAYMENT,1)
+(COMPLETE,1)
+(CLOSED,1)
+(COMPLETE,1)
+
+scala> val combine = orderMap.combineByKey( v=> 1, (x:Int,y:Int)=> x+1,(x:Int,y:Int)=>(x+y))
+combine: org.apache.spark.rdd.RDD[(String, Int)] = ShuffledRDD[56] at combineByKey at <console>:31
+
+scala> combine.take(5).foreach(println)
+(PENDING_PAYMENT,15030)                                                         
+(PROCESSING,8275)
+(SUSPECTED_FRAUD,1558)
+(CLOSED,7556)
+(CANCELED,1428)
