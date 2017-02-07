@@ -37,7 +37,7 @@ scala> agg.collect.foreach(println)
 scala> val petAge= petMap.aggregateByKey(0)((x,y)=>x+y,(x,y)=>x+y)
 agg2: org.apache.spark.rdd.RDD[(String, Int)] = ShuffledRDD[9] at aggregateByKey at <console>:32
 
-scala> agg2.collect.foreach(println)
+scala> petAge.collect.foreach(println)
 (dog,12)                                                                        
 (cat,19)
 (mouse,6)
@@ -50,15 +50,15 @@ scala> agg2.collect.foreach(println)
 ---------------------------------------------
 | Pet category | Price of pet  | Age of Pet |
 ---------------------------------------------
-scala> val data = sc.parallelize(List( ("cat","2","1"), ("cat","2","5"), ("mouse","1", "4"),("cat","2", "12"), ("dog","3", "12"), ("mouse","1","2")), 2)
+scala> val petRDD = sc.parallelize(List( ("cat","2","1"), ("cat","2","5"), ("mouse","1", "4"),("cat","2", "12"), ("dog","3", "12"), ("mouse","1","2")), 2)
 data: org.apache.spark.rdd.RDD[(String, String, String)] = ParallelCollectionRDD[46] at parallelize at <console>:27
 
 #map (k,(v1,v2)) format 
-scala> val map =data.map(x=>(x._1,(x._2,x._3))
+scala> val petMap =petRDD.map(x=>(x._1,(x._2,x._3))
      | )
 map: org.apache.spark.rdd.RDD[(String, (String, String))] = MapPartitionsRDD[47] at map at <console>:29
 
-scala> map.collect().foreach(println)
+scala> petMap.collect().foreach(println)
 (cat,(2,1))                                                                     
 (cat,(2,5))
 (mouse,(1,4))
@@ -68,12 +68,12 @@ scala> map.collect().foreach(println)
 
  #calculate the price & age of the w.r.t pets category                                                          
 
-scala> val agg2= map.aggregateByKey((0,0))((x,y)=>(x._1+y._1,x._2+y._2),(x,y)=>(x._1+y._1,x._2+y._2))
+scala> val calPetData= map.aggregateByKey((0,0))((x,y)=>(x._1+y._1,x._2+y._2),(x,y)=>(x._1+y._1,x._2+y._2))
 agg2: org.apache.spark.rdd.RDD[(String, (Int, Int))] = ShuffledRDD[49] at aggregateByKey at <console>:31
 
                                     
 
-scala> agg2.collect().foreach(println)
+scala> calPetdata.collect().foreach(println)
 (dog,(3,12))
 (cat,(6,18))
 (mouse,(2,6))
